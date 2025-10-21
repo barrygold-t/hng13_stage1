@@ -1,24 +1,6 @@
 {
   "strings": [
     {
-      "id": "e00f9ef51a95f6e854862eed28dc0f1a68f154d9f75ddd841ab00de6ede9209b",
-      "value": "racecar",
-      "properties": {
-        "length": 7,
-        "is_palindrome": true,
-        "unique_characters": 4,
-        "word_count": 1,
-        "sha256_hash": "e00f9ef51a95f6e854862eed28dc0f1a68f154d9f75ddd841ab00de6ede9209b",
-        "character_frequency_map": {
-          "r": 2,
-          "a": 2,
-          "c": 2,
-          "e": 1
-        }
-      },
-      "created_at": "2025-10-20T23:35:35.113Z"
-    },
-    {
       "id": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "value": "",
       "properties": {
@@ -30,21 +12,6 @@
         "character_frequency_map": {}
       },
       "created_at": "2025-10-20T23:41:46.951Z"
-    },
-    {
-      "id": "aaa9402664f1a41f40ebbc52c9993eb66aeb366602958fdfaa283b71e64db123",
-      "value": "h",
-      "properties": {
-        "length": 1,
-        "is_palindrome": true,
-        "unique_characters": 1,
-        "word_count": 1,
-        "sha256_hash": "aaa9402664f1a41f40ebbc52c9993eb66aeb366602958fdfaa283b71e64db123",
-        "character_frequency_map": {
-          "h": 1
-        }
-      },
-      "created_at": "2025-10-20T23:42:29.086Z"
     }
   ]
 }
