@@ -16,7 +16,6 @@ router.post('/', async (req, res, next) => {
     const { value } = req.body;
     if (typeof value !== 'string') return res.status(422).json({ error: '"value" must be a string' });
 
-    // check exists by value
     const existing = await store.findByValue(value);
     if (existing) return res.status(409).json({ error: 'String already exists' });
 
@@ -35,11 +34,39 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+// ✅ Move this route above /:string_value
+// GET /strings/filter-by-natural-language?query=...
+router.get('/filter-by-natural-language', async (req, res, next) => {
+  try {
+    const q = req.query.query;
+    if (!q) return res.status(400).json({ error: 'query param is required' });
+
+    let parsed;
+    try {
+      parsed = parseNaturalLanguageQuery(q);
+    } catch (err) {
+      return res.status(400).json({ error: err.message || 'Unable to parse natural language query' });
+    }
+
+    const all = await store.getAllStrings();
+    const filtered = applyFilters(all, parsed.parsed_filters);
+    res.json({
+      data: filtered,
+      count: filtered.length,
+      interpreted_query: {
+        original: parsed.original,
+        parsed_filters: parsed.parsed_filters
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /strings/:string_value
 router.get('/:string_value', async (req, res, next) => {
   try {
     const value = req.params.string_value;
-    // The path uses the string value directly; since slashes may be encoded, decode.
     const decoded = decodeURIComponent(value);
     const entry = await store.findByValue(decoded);
     if (!entry) return res.status(404).json({ error: 'String does not exist' });
@@ -65,8 +92,6 @@ router.delete('/:string_value', async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     const { is_palindrome, min_length, max_length, word_count, contains_character } = req.query;
-
-    // validate query params types
     const filters = {};
     if (is_palindrome !== undefined) {
       if (!(is_palindrome === 'true' || is_palindrome === 'false')) {
@@ -96,27 +121,6 @@ router.get('/', async (req, res, next) => {
     const all = await store.getAllStrings();
     const data = applyFilters(all, filters);
     res.json({ data, count: data.length, filters_applied: filters });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// GET /strings/filter-by-natural-language?query=...
-router.get('/filter-by-natural-language', async (req, res, next) => {
-  try {
-    const q = req.query.query;
-    if (!q) return res.status(400).json({ error: 'query param is required' });
-
-    let parsed;
-    try {
-      parsed = parseNaturalLanguageQuery(q);
-    } catch (err) {
-      return res.status(400).json({ error: err.message || 'Unable to parse natural language query' });
-    }
-
-    const all = await store.getAllStrings();
-    const filtered = applyFilters(all, parsed.parsed_filters);
-    res.json({ data: filtered, count: filtered.length, interpreted_query: { original: parsed.original, parsed_filters: parsed.parsed_filters } });
   } catch (err) {
     next(err);
   }
